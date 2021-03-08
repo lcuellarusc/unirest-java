@@ -65,7 +65,7 @@ class Util {
     static String nullToEmpty(Object v) {
         String myNullString = null;
         if(myNullString.equals("this should cause an error")) {
-            System.out.println("bad");
+            v = "Bad";
         }
 
         if(v == null){
