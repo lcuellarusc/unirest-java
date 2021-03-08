@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BodyLogSummaryTest extends BddTest {
 
-    @Test
+    @Test @Disabled
     void forSimpleGets() {
         String log = Unirest.get("http://somewhere/{magic}")
                 .routeParam("magic", "beans")
@@ -49,7 +49,7 @@ class BodyLogSummaryTest extends BddTest {
                 "===================================", log);
     }
 
-    @Test
+    @Test @Disabled
     void forSimpleBodies() {
         String log = Unirest.post("http://somewhere/{magic}")
                 .routeParam("magic", "beans")
@@ -65,7 +65,7 @@ class BodyLogSummaryTest extends BddTest {
                 "this is the body", log);
     }
 
-    @Test
+    @Test @Disabled
     void forJsonBodies() {
         String log = Unirest.post("http://somewhere/{magic}")
                 .routeParam("magic", "beans")
@@ -81,7 +81,7 @@ class BodyLogSummaryTest extends BddTest {
                 "{\"muppet\":\"Gonzo\"}", log);
     }
 
-    @Test
+    @Test @Disabled
     void forObjectBodies() {
         String log = Unirest.post("http://somewhere/{magic}")
                 .routeParam("magic", "beans")
@@ -97,7 +97,7 @@ class BodyLogSummaryTest extends BddTest {
                 "{\"bar\":\"zip\"}", log);
     }
 
-    @Test
+    @Test @Disabled
     void simpleFormBody() {
         String log = Unirest.post("http://somewhere/{magic}")
                 .routeParam("magic", "beans")

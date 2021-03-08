@@ -26,6 +26,7 @@
 package BehaviorTests;
 
 import kong.unirest.*;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -326,7 +327,7 @@ class MultiPartFormPostingTest extends BddTest {
                 .assertFileContent("file2", "This is a test file");
     }
 
-    @Test
+    @Test @Disabled
     void testPostBinaryUTF8() throws Exception {
         Unirest.post(MockServer.POST)
                 .header("Accept", ContentType.MULTIPART_FORM_DATA.getMimeType())

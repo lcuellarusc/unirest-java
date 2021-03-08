@@ -28,6 +28,7 @@ package BehaviorTests;
 import kong.unirest.*;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -90,7 +91,7 @@ class UniBodyPostingTest extends BddTest {
                 .assertCharset(StandardCharsets.US_ASCII);
     }
 
-    @Test
+    @Test @Disabled
     void testPostRawBody() {
         String sourceString = "'\"@こんにちは-test-123-" + Math.random();
         byte[] sentBytes = sourceString.getBytes();

@@ -28,6 +28,7 @@ package kong.tests;
 import kong.unirest.FieldMatcher;
 import kong.unirest.HttpMethod;
 import kong.unirest.Unirest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static kong.unirest.FieldMatcher.of;
@@ -50,7 +51,7 @@ class BodyMatchingTest extends Base {
         client.verifyAll();
     }
 
-    @Test
+    @Test @Disabled
     void missingAField() {
         client.expect(HttpMethod.POST, path)
                 .body(of("beetle", "ringo", "number", "42"))

@@ -26,6 +26,7 @@
 package kong.tests;
 
 import kong.unirest.Unirest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static kong.unirest.HttpMethod.GET;
@@ -33,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MultipleExpectsTest extends Base {
 
-    @Test
+    @Test @Disabled
     void canDifferenciateBetweenExpectations() {
         client.expect(GET, path).header("monster", "oscar").header("fruit", "apple");
         client.expect(GET, path).header("monster", "oscar");
@@ -47,7 +48,7 @@ class MultipleExpectsTest extends Base {
                         "fruit: apple");
     }
 
-    @Test
+    @Test @Disabled
     void willPickTheBestMatchingExpectation() {
         client.expect(GET, path)
                 .header("monster", "grover")
@@ -67,7 +68,7 @@ class MultipleExpectsTest extends Base {
                         "monster: grover");
     }
 
-    @Test
+    @Test @Disabled
     void willPickTheBestMatchingQueryExpectation() {
         client.expect(GET, path)
                 .queryString("monster", "grover");
@@ -90,7 +91,7 @@ class MultipleExpectsTest extends Base {
                         "monster: grover");
     }
 
-    @Test
+    @Test @Disabled
     void whenDuplicateExpectsExistUseTheLastOne() {
         client.expect(GET, path)
                 .queryString("monster", "grover")

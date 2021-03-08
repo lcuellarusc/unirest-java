@@ -70,7 +70,7 @@ class HeaderTest extends BddTest {
                 .assertBasicAuth("user", "password1!");
     }
 
-    @Test
+    @Test @Disabled
     void unicodeBasicAuth() {
         Unirest.get(MockServer.GET)
                 .basicAuth("こんにちは", "こんにちは")

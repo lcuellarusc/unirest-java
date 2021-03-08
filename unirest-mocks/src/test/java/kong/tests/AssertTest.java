@@ -28,6 +28,7 @@ package kong.tests;
 import kong.unirest.Assert;
 import kong.unirest.HttpMethod;
 import kong.unirest.Unirest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static kong.unirest.HttpMethod.GET;
@@ -61,7 +62,7 @@ class AssertTest extends Base {
 
     }
 
-    @Test
+    @Test @Disabled
     void noExpectation() {
         client.expect(GET, otherPath);
         assertException(() -> client.verifyAll(),
@@ -85,7 +86,7 @@ class AssertTest extends Base {
                 "No invocation found with header [monster: oscar]\nFound:\nmonster: grover");
     }
 
-    @Test
+    @Test @Disabled
     void canSetHeaderExpectationOnExpects() {
         client.expect(GET, path).header("monster", "grover");
 
@@ -132,7 +133,7 @@ class AssertTest extends Base {
         assertEquals("bar", Unirest.post(path).body("foo").asString().getBody());
     }
 
-    @Test
+    @Test @Disabled
     void assertBody() {
         client.expect(POST, path)
                 .body("foo")
