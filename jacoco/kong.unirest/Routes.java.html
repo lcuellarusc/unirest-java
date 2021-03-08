@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Routes.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">unirest-mocks</a> &gt; <a href="index.source.html" class="el_package">kong.unirest</a> &gt; <span class="el_source">Routes.java</span></div><h1>Routes.java</h1><pre class="source lang-java linenums">/**
+ * The MIT License
+ *
+ * Copyright for portions of unirest-java are held by Kong Inc (c) 2013.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * &quot;Software&quot;), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+package kong.unirest;
+
+import java.util.*;
+
+class Routes implements Assert {
+    private final String path;
+    private final HttpMethod method;
+<span class="fc" id="L33">    private final List&lt;Invocation&gt; invokes = new ArrayList&lt;&gt;();</span>
+
+
+<span class="fc" id="L36">    Routes(HttpRequest request) {</span>
+<span class="fc" id="L37">        Path p = new Path(request.getUrl());</span>
+<span class="fc" id="L38">        this.method = request.getHttpMethod();</span>
+<span class="fc" id="L39">        this.path = p.baseUrl();</span>
+<span class="fc" id="L40">        invokes.add(new Invocation(this, request));</span>
+<span class="fc" id="L41">    }</span>
+
+<span class="fc" id="L43">    public Routes(HttpMethod method, Path p) {</span>
+<span class="fc" id="L44">        this.method = method;</span>
+<span class="fc" id="L45">        this.path = p.baseUrl();</span>
+<span class="fc" id="L46">    }</span>
+
+    Expectation newExpectation() {
+<span class="fc" id="L49">        Invocation inv = new Invocation(this);</span>
+<span class="fc" id="L50">        invokes.add(inv);</span>
+<span class="fc" id="L51">        return inv;</span>
+    }
+
+    boolean matches(HttpRequest request) {
+<span class="fc" id="L55">        Path p = new Path(request.getUrl());</span>
+<span class="pc bpc" id="L56" title="1 of 4 branches missed.">        return this.method.equals(request.getHttpMethod())</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">                &amp;&amp; this.path == null || this.path.equalsIgnoreCase(p.baseUrl());</span>
+    }
+
+    RawResponse exchange(HttpRequest request, Config config) {
+<span class="fc" id="L61">        return getBestMatch(request)</span>
+<span class="fc" id="L62">                .map(invocation -&gt; invocation.getResponse(config, request))</span>
+<span class="fc" id="L63">                .orElseGet(() -&gt; {</span>
+<span class="fc" id="L64">                    Invocation i = new Invocation(this);</span>
+<span class="fc" id="L65">                    i.log(request);</span>
+<span class="fc" id="L66">                    invokes.add(i);</span>
+<span class="fc" id="L67">                    return i.getResponse(config, request);</span>
+                });
+    }
+
+    boolean matches(HttpMethod httpMethod, Path url) {
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">        return this.method.equals(httpMethod)</span>
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">                &amp;&amp; this.path.equals(url.baseUrl());</span>
+    }
+
+    private Optional&lt;Invocation&gt; getBestMatch(HttpRequest request) {
+<span class="fc" id="L77">        Optional&lt;Invocation&gt; i = getBestMatch(request, true);</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        if(i.isPresent()){</span>
+<span class="fc" id="L79">            return i;</span>
+        }
+<span class="fc" id="L81">        return getBestMatch(request, false);</span>
+    }
+
+    private Optional&lt;Invocation&gt; getBestMatch(HttpRequest request, boolean expected) {
+<span class="fc" id="L85">        Map&lt;Integer, Invocation&gt; map = new TreeMap&lt;&gt;();</span>
+<span class="fc" id="L86">        invokes.stream()</span>
+<span class="fc" id="L87">                .forEach(i -&gt; {</span>
+<span class="fc" id="L88">                    Integer score = i.scoreMatch(request);</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">                    if(score &gt;= 0) {</span>
+<span class="fc" id="L90">                        map.put(score, i);</span>
+                    }
+<span class="fc" id="L92">                });</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        if (map.size() == 0) {</span>
+<span class="fc" id="L94">            return Optional.empty();</span>
+        }
+<span class="fc" id="L96">        Invocation value = map.get(Collections.max(map.keySet()));</span>
+<span class="fc" id="L97">        value.log(request);</span>
+<span class="fc" id="L98">        return Optional.of(value);</span>
+    }
+
+    @Override
+    public void assertHeader(String key, String value) {
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        if (invokes.stream().noneMatch(i -&gt; i.hasExpectedHeader(key, value))) {</span>
+<span class="fc" id="L104">            throw new UnirestAssertion(</span>
+                    &quot;No invocation found with header [%s: %s]\nFound:\n%s&quot;,
+<span class="fc" id="L106">                    key, value, allHeaders());</span>
+        }
+<span class="fc" id="L108">    }</span>
+
+    private Headers allHeaders() {
+<span class="fc" id="L111">        return invokes.stream()</span>
+<span class="fc" id="L112">                .flatMap(i -&gt; i.getRequests().stream())</span>
+<span class="fc" id="L113">                .map(HttpRequest::getHeaders)</span>
+<span class="fc" id="L114">                .reduce((l, r) -&gt; {</span>
+<span class="nc" id="L115">                    l.putAll(r);</span>
+<span class="nc" id="L116">                    return l;</span>
+<span class="fc" id="L117">                }).orElseGet(Headers::new);</span>
+    }
+
+    @Override
+    public void assertInvokedTimes(int i) {
+<span class="fc" id="L122">        Integer sum = sumInvokes();</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">        if (sum != i) {</span>
+<span class="fc" id="L124">            throw new UnirestAssertion(</span>
+                    &quot;Incorrect number of invocations. Expected %s got %s\n%s %s&quot;,
+<span class="fc" id="L126">                    i, sum, method, path);</span>
+        }
+<span class="fc" id="L128">    }</span>
+
+    private Integer sumInvokes() {
+<span class="fc" id="L131">        return invokes.stream()</span>
+<span class="fc" id="L132">                .map(Invocation::requestSize)</span>
+<span class="fc" id="L133">                .reduce(0, Integer::sum);</span>
+    }
+
+    @Override
+    public void verifyAll() {
+<span class="fc" id="L138">        invokes.forEach(Invocation::verify);</span>
+<span class="fc" id="L139">    }</span>
+
+    HttpMethod getMethod() {
+<span class="fc" id="L142">        return method;</span>
+    }
+
+    String getPath() {
+<span class="fc" id="L146">        return path;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

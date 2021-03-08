@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MockRawResponse.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">unirest-mocks</a> &gt; <a href="index.source.html" class="el_package">kong.unirest</a> &gt; <span class="el_source">MockRawResponse.java</span></div><h1>MockRawResponse.java</h1><pre class="source lang-java linenums">/**
+ * The MIT License
+ *
+ * Copyright for portions of unirest-java are held by Kong Inc (c) 2013.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * &quot;Software&quot;), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+package kong.unirest;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+
+public class MockRawResponse implements RawResponse {
+    private final String response;
+    private final Headers responseHeaders;
+    private final int status;
+    private final String statusMessage;
+    private final Config config;
+
+    public MockRawResponse(String responseBody, Headers responseHeaders, int status,
+<span class="fc" id="L43">                           String statusMessage, Config config) {</span>
+<span class="fc" id="L44">        this.response = responseBody;</span>
+<span class="fc" id="L45">        this.responseHeaders = responseHeaders;</span>
+<span class="fc" id="L46">        this.status = status;</span>
+<span class="fc" id="L47">        this.statusMessage = statusMessage;</span>
+<span class="fc" id="L48">        this.config = config;</span>
+<span class="fc" id="L49">    }</span>
+
+    @Override
+    public int getStatus() {
+<span class="fc" id="L53">        return status;</span>
+    }
+
+    @Override
+    public String getStatusText() {
+<span class="fc" id="L58">        return statusMessage;</span>
+    }
+
+    @Override
+    public Headers getHeaders() {
+<span class="fc" id="L63">        return responseHeaders;</span>
+    }
+
+    @Override
+    public InputStream getContent() {
+<span class="fc" id="L68">        return new ByteArrayInputStream(response.getBytes());</span>
+    }
+
+    @Override
+    public byte[] getContentAsBytes() {
+<span class="fc" id="L73">        return response.getBytes();</span>
+    }
+
+    @Override
+    public String getContentAsString() {
+<span class="fc" id="L78">        return response;</span>
+    }
+
+    @Override
+    public String getContentAsString(String charset) {
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        if(Objects.isNull(response)){</span>
+<span class="fc" id="L84">            return null;</span>
+        }
+<span class="fc" id="L86">        return new String(response.getBytes(), tryGetCharset(charset));</span>
+    }
+
+    private Charset tryGetCharset(String charset) {
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        if(Objects.isNull(charset)){</span>
+<span class="fc" id="L91">            return StandardCharsets.UTF_8;</span>
+        }
+<span class="fc" id="L93">        return Charset.forName(charset);</span>
+    }
+
+    @Override
+    public InputStreamReader getContentReader() {
+<span class="fc" id="L98">        return new InputStreamReader(getContent());</span>
+    }
+
+    @Override
+    public boolean hasContent() {
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">        return response != null;</span>
+    }
+
+    @Override
+    public String getContentType() {
+<span class="fc" id="L108">        return responseHeaders.getFirst(&quot;Content-Type&quot;);</span>
+    }
+
+    @Override
+    public String getEncoding() {
+<span class="fc" id="L113">        return responseHeaders.getFirst(&quot;Content-Encoding&quot;);</span>
+    }
+
+    @Override
+    public Config getConfig() {
+<span class="fc" id="L118">        return config;</span>
+    }
+
+    @Override
+    public HttpResponseSummary toSummary() {
+<span class="fc" id="L123">        return new ResponseSummary(this);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
